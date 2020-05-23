@@ -13,9 +13,6 @@ const babelOptions = {
             "@babel/env",
             {
                 modules: false,
-                targets: {
-                    node: "10.15.3",
-                },
             },
         ],
     ],
