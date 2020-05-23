@@ -1,6 +1,6 @@
 import ISymbol from "imitate-symbol";
 
-const FINISH_TASK = "EP_TASK_FINISH";
+const FINISH_TASK = "#_EVENT_PLAN_TASK_FINISH_#";
 
 class EventPlan {
     private eventsMap: any = {};
@@ -57,15 +57,18 @@ class EventPlan {
         handle: Function,
         ...devsTasks: string[]
     ) => {
+        const originName = taskName;
+        taskName = ISymbol.for(taskName);
         const offHandle = this.on(taskName, handle);
         this.taskStatusMap[taskName] = false;
+
         if (devsTasks.length > 1) {
             const autoStart = () => {
                 const isReady = devsTasks.every(
-                    (name) => this.taskStatusMap[name]
+                    (name) => this.taskStatusMap[ISymbol.for(name)]
                 );
                 if (isReady) {
-                    this.startTask(taskName);
+                    this.startTask(originName);
                     this.off(ISymbol.for(FINISH_TASK), autoStart);
                 }
             };
@@ -75,7 +78,9 @@ class EventPlan {
     };
 
     startTask = async (taskName: string, ...arg: any[]): Promise<any> => {
+        taskName = ISymbol.for(taskName);
         const res = await this.emit(taskName, ...arg);
+
         this.taskStatusMap[taskName] = true;
         this.emit(ISymbol.for(FINISH_TASK));
         this.off(taskName);
@@ -91,7 +96,9 @@ class EventPlan {
         const devsTasks = arg[arg.length - 1];
         let _resolve: Function;
         const autoStart = async () => {
-            const isReady = devsTasks.every((name) => this.taskStatusMap[name]);
+            const isReady = devsTasks.every(
+                (name) => this.taskStatusMap[ISymbol.for(name)]
+            );
             if (isReady) {
                 const res = await this.startTask(taskName);
                 this.off(ISymbol.for(FINISH_TASK), autoStart);
