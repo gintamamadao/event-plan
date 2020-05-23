@@ -20,7 +20,9 @@
         "url": "https://github.com/gintamamadao/event-plan/issues"
     },
     "homepage": "https://github.com/gintamamadao/event-plan#readme",
-    "dependencies": {},
+    "dependencies": {
+        "imitate-symbol": "^1.0.3"
+    },
     "devDependencies": {
         "@babel/core": "^7.4.5",
         "@babel/preset-env": "^7.4.5",
