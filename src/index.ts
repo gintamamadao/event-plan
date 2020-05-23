@@ -11,12 +11,11 @@ class EventPlan {
     }
 
     on = (taskName: string, handle: Function) => {
-        if (!taskName || typeof handle !== "function") {
-            return;
-        }
         const eventsMap = this.eventsMap;
         const handleList = eventsMap[taskName] || [];
-        handleList.push(handle);
+        if (typeof handle === "function") {
+            handleList.push(handle);
+        }
         eventsMap[taskName] = handleList;
         this.eventsMap = eventsMap;
         return () => {
@@ -25,10 +24,6 @@ class EventPlan {
     };
 
     emit = async (taskName: string, ...arg: any[]): Promise<any> => {
-        if (!taskName) {
-            return;
-        }
-
         const eventsMap = this.eventsMap;
         const handleList = eventsMap[taskName] || [];
         const res = await Promise.all(
@@ -45,9 +40,6 @@ class EventPlan {
     };
 
     off = (taskName: string, handle?: Function) => {
-        if (!taskName) {
-            return;
-        }
         const eventsMap = this.eventsMap || {};
         let handleList = eventsMap[taskName] || [];
         if (typeof handle !== "function") {
@@ -65,9 +57,6 @@ class EventPlan {
         handle: Function,
         ...devsTasks: string[]
     ) => {
-        if (!taskName || typeof handle !== "function") {
-            return;
-        }
         const offHandle = this.on(taskName, handle);
         this.taskStatusMap[taskName] = false;
         if (devsTasks.length > 1) {
@@ -86,11 +75,7 @@ class EventPlan {
     };
 
     startTask = async (taskName: string, ...arg: any[]): Promise<any> => {
-        if (!taskName) {
-            return;
-        }
         const res = await this.emit(taskName, ...arg);
-
         this.taskStatusMap[taskName] = true;
         this.emit(ISymbol.for(FINISH_TASK));
         this.off(taskName);
@@ -103,16 +88,7 @@ class EventPlan {
     };
 
     startTaskDevs = (taskName: string, ...arg: any[]) => {
-        if (arg.length <= 0) {
-            return;
-        }
-
         const devsTasks = arg[arg.length - 1];
-
-        if (devsTasks.length <= 0) {
-            return;
-        }
-
         let _resolve: Function;
         const autoStart = async () => {
             const isReady = devsTasks.every((name) => this.taskStatusMap[name]);
@@ -125,7 +101,7 @@ class EventPlan {
 
         this.on(ISymbol.for(FINISH_TASK), autoStart);
 
-        return new Promise((resolve) => {
+        return new Promise<any>((resolve) => {
             _resolve = (data) => {
                 resolve(data);
             };
