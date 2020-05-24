@@ -88,7 +88,9 @@ class EventPlan {
             };
             this.on(ISymbol.for(FINISH_TASK), autoStart);
             this.taskWaitQueue[taskName] = true;
-            this.emit(ISymbol.for(FINISH_TASK));
+            setTimeout(() => {
+                this.emit(ISymbol.for(FINISH_TASK));
+            }, 0);
         }
         return offHandle;
     };
