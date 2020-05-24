@@ -88,6 +88,7 @@ class EventPlan {
             };
             this.on(ISymbol.for(FINISH_TASK), autoStart);
             this.taskWaitQueue[taskName] = true;
+            this.emit(ISymbol.for(FINISH_TASK));
         }
         return offHandle;
     };
@@ -132,6 +133,7 @@ class EventPlan {
 
         this.on(ISymbol.for(FINISH_TASK), autoStart);
         this.taskWaitQueue[ISymbol.for(taskName)] = true;
+        this.emit(ISymbol.for(FINISH_TASK));
 
         return new Promise<any>((resolve) => {
             _resolve = (data) => {

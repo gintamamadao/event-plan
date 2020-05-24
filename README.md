@@ -144,7 +144,7 @@ Type: `String[]`
 
 ### `eventPlan.startTask(name[, args]);`
 
-触发一个任务
+触发一个任务，立即执行
 
 ```javascript
 eventPlan.startTask("task_a", arg1, arg2);
@@ -160,11 +160,11 @@ Type: `String`
 
 Type: `any`
 
-传给回调函数的参数
+传给回调函数的参数，非必传
 
 ### `eventPlan.startTaskDevs(name[, ...args][, devs]);`
 
-触发一个任务，最后一个传入的参数是一个任务名数组，当前任务将在这些任务完成才自动完成
+触发一个任务，自动执行，最后一个传入的参数必须是一个任务名数组，当前任务将在这些任务完成才自动完成
 
 ```javascript
 eventPlan.startTaskDevs("task_a", arg1, arg2, ["task_b"]);
@@ -180,10 +180,10 @@ Type: `String`
 
 Type: `any`
 
-传给回调函数的参数
+传给回调函数的参数，非必传
 
 #### devs
 
 Type: `String[]`
 
-在某些任务结束后自动执行，如果不传，则需要手动执行，必传参数
+在哪某些任务结束后自动执行，必传参数
