@@ -48,7 +48,7 @@ eventPlan.startTaskDevs("task_a", ["task_b"]);
 
 ### `eventPlan.on(name, cb);`
 
-注册一个事件
+注册一个事件，并返回一个注销事件的句柄
 
 ```javascript
 eventPlan.on("event_a", function () {
