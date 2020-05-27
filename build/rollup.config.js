@@ -17,6 +17,7 @@ const babelOptions = {
             },
         ],
     ],
+    plugins: ["@babel/plugin-transform-runtime"],
 };
 
 module.exports = {
@@ -37,5 +38,5 @@ module.exports = {
             },
         }),
     ],
-    external: ["imitate-symbol"],
+    external: ["imitate-symbol", "@babel/runtime", "regenerator-runtime"],
 };

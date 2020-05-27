@@ -1,6 +1,6 @@
 {
     "name": "event-plan",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "控制事件的触发的条件，顺序",
     "main": "./lib/event-plan.js",
     "types": "./lib/index.d.ts",
@@ -21,7 +21,9 @@
     },
     "homepage": "https://github.com/gintamamadao/event-plan#readme",
     "dependencies": {
-        "imitate-symbol": "^1.0.7"
+        "imitate-symbol": "^1.0.7",
+        "regenerator-runtime": "^0.13.5",
+        "@babel/runtime": "^7.10.0"
     },
     "keywords": [
         "schedule",
@@ -30,13 +32,14 @@
     ],
     "devDependencies": {
         "@babel/core": "^7.4.5",
+        "@babel/plugin-transform-runtime": "^7.10.0",
         "@babel/preset-env": "^7.4.5",
         "jest": "^24.8.0",
         "rollup": "^1.26.3",
         "rollup-plugin-babel": "^4.3.2",
         "rollup-plugin-commonjs": "^10.0.0",
-        "rollup-plugin-typescript2": "^0.27.0",
         "rollup-plugin-terser": "^6.0.1",
+        "rollup-plugin-typescript2": "^0.27.0",
         "tslib": "^1.9.3",
         "tslint": "^6.1.2",
         "tslint-microsoft-contrib": "^6.2.0",
