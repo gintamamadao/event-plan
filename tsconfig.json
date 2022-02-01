@@ -1,20 +1,16 @@
 {
-    "compilerOptions": {
-        "outDir": "./lib/",
-        "sourceMap": true,
-        "noImplicitAny": false,
-        "module": "es6",
-        "target": "esnext",
-        "declaration": true,
-        "declarationDir": "./lib/",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "noImplicitThis": false,
-        "lib": ["es5", "es6", "dom", "es7", "esnext"],
-        "experimentalDecorators": true,
-        "strict": true
-    },
-    "include": ["./src/**/*"],
-    "exclude": ["node_modules"]
+  "compilerOptions": {
+    "declaration": true,
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "module": "es6",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noImplicitThis": false,
+    "lib": ["es5", "es6", "dom", "es7", "esnext"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+  }
 }

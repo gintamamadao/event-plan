@@ -1,15 +1,28 @@
-declare class EventPlan {
-    private eventsMap;
-    private taskStatusMap;
-    private taskLockMap;
-    private taskWaitQueue;
-    private globalConfig;
-    constructor(config?: any);
-    on: (taskName: string, handle: Function) => () => void;
-    emit: (taskName: string, ...arg: any[]) => Promise<any>;
-    off: (taskName: string, handle?: Function | undefined) => void;
-    registerTask: (taskName: string, handle: Function, devsTasks?: string[] | undefined) => (() => void) | undefined;
-    startTask: (taskName: string, ...arg: any[]) => Promise<any>;
-    startTaskDevs: (taskName: string, ...arg: any[]) => Promise<any> | undefined;
+import { AnyFunction } from './rollup-plugin-add-global-ts_@global'
+export interface EventPlanInfo {
+    name: string;
+    handle: AnyFunction;
+    weight?: number;
+    before?: string;
+    after?: string;
 }
-export default EventPlan;
+declare class Plan {
+    private isAsync;
+    private eventChain;
+    private eventsEmitt;
+    private eventQueue;
+    private planInfoMap;
+    constructor(context?: any, isAsync?: boolean);
+    addToPlan: (info: EventPlanInfo) => void;
+    private addByWeight;
+    private addByBefore;
+    private addByAfter;
+    private findNodeTopLegalBefore;
+    private findNodeTopLegalAfter;
+    getPlanInfos: () => EventPlanInfo[];
+    getPlan: () => string[];
+    private emitEvent;
+    execPlan: () => void;
+    execAsyncPlan: () => Promise<void>;
+}
+export default Plan;

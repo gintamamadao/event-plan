@@ -1,189 +1,147 @@
+# event-plan
+
 [![NPM version](https://badgen.net/npm/v/event-plan)](https://www.npmjs.com/package/event-plan)
 [![NPM Weekly Downloads](https://badgen.net/npm/dw/event-plan)](https://www.npmjs.com/package/event-plan)
 [![License](https://badgen.net/npm/license/event-plan)](https://www.npmjs.com/package/event-plan)
 
-# event-plan
+用于处理多个注册事件执行顺序，可以设置事件的权重，依赖事件，从而获得目标的执行顺序
 
-用于设计控制事件的触发的条件，顺序
+# 使用
 
-## 实例
-
-1. 注册触发普通的事件
+### 事件按权重执行
 
 ```js
-import EventPlan from "event-plan";
+import Plan from 'event-plan'
 
-const eventPlan = new EventPlan();
+let str = ''
 
-// 注册事件
-eventPlan.on("event_a", () => {
-    console.log("event_a");
-});
+const plan = new Plan()
+plan.addToPlan({
+  name: 'a',
+  handle: () => {
+    str = str + 'a'
+  },
+  weight: 1,
+})
+plan.addToPlan({
+  name: 'b',
+  handle: () => {
+    str = str + 'b'
+  },
+  weight: 10,
+})
+plan.addToPlan({
+  name: 'c',
+  handle: () => {
+    str = str + 'c'
+  },
+  weight: 100,
+})
 
-// 触发事件
-eventPlan.emit("event_a");
-
-// 注销事件
-eventPlan.off("event_a");
+// 根据权重 weight 的值，执行顺序是 c -> b -> a
 ```
 
-2. 注册任务
+> 注意：用相同权重的事件采用队列的模式，先注册先执行，后注册后执行
+
+### 事件按前置依赖关系 before 执行
 
 ```js
-// 注册任务
-eventPlan.registerTask("task_a", () => {
-    console.log("task_a");
-});
+import Plan from 'event-plan'
 
-// 触发任务
-eventPlan.startTask("task_a");
+let str = ''
 
-// 在任务 task_b 完成后触发任务
-eventPlan.startTaskDevs("task_a", ["task_b"]);
+const plan = new Plan()
+let str = ''
+plan.addToPlan({
+  name: 'a',
+  handle: () => {
+    str = str + 'a'
+  },
+  weight: 1,
+})
+plan.addToPlan({
+  name: 'a-1',
+  handle: () => {
+    str = str + 'a-1'
+  },
+  before: 'a',
+  weight: 1,
+})
+plan.addToPlan({
+  name: 'b',
+  handle: () => {
+    str = str + 'b'
+  },
+  weight: 10,
+})
+
+// a-1 是 a 的事件的依赖，需要在 a 之前执行，所以顺序是 b -> a-1 -> a
 ```
 
-与事件不一样，任务执行后会自行注销，任务必须通过 `startTask` 或者 `startTaskDevs` 触发
+### 事件按前置依赖关系 after 执行
 
-## API
+```js
+import Plan from 'event-plan'
 
-### `eventPlan.on(name, cb);`
+let str = ''
 
-注册一个事件，并返回一个注销事件的句柄
+const plan = new Plan()
+let str = ''
+plan.addToPlan({
+  name: 'a',
+  handle: () => {
+    str = str + 'a'
+  },
+  weight: 1,
+})
+plan.addToPlan({
+  name: 'a-1',
+  handle: () => {
+    str = str + 'a-1'
+  },
+  after: 'a',
+  weight: 100,
+})
+plan.addToPlan({
+  name: 'a-2',
+  handle: () => {
+    str = str + 'a-2'
+  },
+  after: 'a',
+  weight: 1,
+})
+plan.addToPlan({
+  name: 'b',
+  handle: () => {
+    str = str + 'b'
+  },
+  weight: 10,
+})
 
-```javascript
-eventPlan.on("event_a", function () {
-    console.log("event_a");
-});
+// a 是 a-2，a-1 的事件的依赖，需要在 a-2，a-1 之前执行，所以顺序是 b -> a -> a-1 -> a-2
 ```
 
-#### name
+> 注意：依赖和权重同时存在的事件，权重将仅在有着相同依赖关系的事件之间进行比较，例如上面的例子，a-1 的权重是 100，但是 a-1 有着依赖关系，所以只会和有着相同依赖关系 a-2 的权重做比较区分先后，所以 a-1 执行的顺序是在 a-2 之前，但是在 b，a 之后，因为 a 是 a-1 的事件的依赖，所以必然在 a 之后，b 的权重比 a 高，所以 b 执行的顺序在 a 的前面，才得到了最后的顺序。
 
-Type: `String`
+# API
 
-事件名，必传参数
+### 初始化
 
-#### cb
+- 初始化时可以加入上下文，将作为参数传入每个事件函数
 
-Type: `Function`
-
-触发事件时的回调函数，必传参数
-
-### `eventPlan.emit(name[, ...args]);`
-
-触发事件
-
-```javascript
-eventPlan.emit("event_a", arg1, arg2);
+```js
+const plan = new Plan(context)
 ```
 
-#### name
+### `addToPlan(info)`
 
-Type: `String`
+- 添加事件
+- 可以重复添加相同事件
 
-事件名，必传参数
+### `getPlan()`
 
-#### args
+- 获取当前事件执行的顺序
 
-Type: `any`
+### `execPlan()`
 
-传给回调函数的参数
-
-### `eventPlan.off(name, cb?);`
-
-注销事件
-
-```javascript
-eventPlan.off("event_a");
-```
-
-#### name
-
-Type: `String`
-
-事件名，必传参数
-
-#### cb
-
-Type: `Function`
-
-如果有传，那只注销该回调函数，否则注销该事件下所有的回调函数，非必传参数
-
-### `eventPlan.registerTask(name, cb, devs?);`
-
-注册一个任务，与事件不一样，可以设置自动执行，而且任务执行后会自行注销，任务必须通过 `startTask` 或者 `startTaskDevs` 触发
-
-```javascript
-eventPlan.registerTask(
-    "task_a",
-    () => {
-        console.log("task_a");
-    },
-    ["task_b"]
-);
-```
-
-在任务 task_b 完成后触发任务 task_a
-
-#### name
-
-Type: `String`
-
-事件名，必传参数
-
-#### cb
-
-Type: `Function`
-
-触发事件时的回调函数，必传参数
-
-#### devs
-
-Type: `String[]`
-
-在某些任务结束后自动执行，如果不传，则需要手动执行，非必传参数
-
-### `eventPlan.startTask(name[, args]);`
-
-触发一个任务，立即执行
-
-```javascript
-eventPlan.startTask("task_a", arg1, arg2);
-```
-
-#### name
-
-Type: `String`
-
-事件名，必传参数
-
-#### args
-
-Type: `any`
-
-传给回调函数的参数，非必传
-
-### `eventPlan.startTaskDevs(name[, ...args][, devs]);`
-
-触发一个任务，自动执行，最后一个传入的参数必须是一个任务名数组，当前任务将在这些任务完成才自动完成
-
-```javascript
-eventPlan.startTaskDevs("task_a", arg1, arg2, ["task_b"]);
-```
-
-#### name
-
-Type: `String`
-
-事件名，必传参数
-
-#### args
-
-Type: `any`
-
-传给回调函数的参数，非必传
-
-#### devs
-
-Type: `String[]`
-
-在哪某些任务结束后自动执行，必传参数
+- 执行事件

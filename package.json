@@ -1,48 +1,81 @@
 {
-    "name": "event-plan",
-    "version": "1.1.5",
-    "description": "控制事件的触发的条件，顺序",
-    "main": "./lib/event-plan.js",
-    "types": "./lib/index.d.ts",
-    "files": [
-        "lib/"
-    ],
-    "scripts": {
-        "build": "node_modules/.bin/rollup -c ./build/rollup.config.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/gintamamadao/event-plan.git"
-    },
-    "author": "gintamamadao",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/gintamamadao/event-plan/issues"
-    },
-    "homepage": "https://github.com/gintamamadao/event-plan#readme",
-    "dependencies": {
-        "imitate-symbol": "^1.0.7",
-        "regenerator-runtime": "^0.13.5",
-        "@babel/runtime": "^7.10.0"
-    },
-    "keywords": [
-        "schedule",
-        "task",
-        "event"
-    ],
-    "devDependencies": {
-        "@babel/core": "^7.4.5",
-        "@babel/plugin-transform-runtime": "^7.10.0",
-        "@babel/preset-env": "^7.4.5",
-        "jest": "^24.8.0",
-        "rollup": "^1.26.3",
-        "rollup-plugin-babel": "^4.3.2",
-        "rollup-plugin-commonjs": "^10.0.0",
-        "rollup-plugin-terser": "^6.0.1",
-        "rollup-plugin-typescript2": "^0.27.0",
-        "tslib": "^1.9.3",
-        "tslint": "^6.1.2",
-        "tslint-microsoft-contrib": "^6.2.0",
-        "typescript": "^3.5.1"
-    }
+  "name": "event-plan",
+  "version": "2.1.0",
+  "description": "used to handle the execution order of multiple registered events, you can set the weight of the event, dependent on the event",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:cov": "jest --coverage --noStackTrace",
+    "dev": "rollup -c rollup.config.js -w",
+    "build": "rimraf lib; rollup -c rollup.config.js",
+    "commit": "git-cz",
+    "del:lib": "rm -rf lib",
+    "pub": "lerna publish"
+  },
+  "keywords": [
+    "plan",
+    "scheme",
+    "schedule"
+  ],
+  "author": "gintamamadao",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gintamamadao/event-plan.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gintamamadao/event-plan/issues"
+  },
+  "homepage": "https://github.com/gintamamadao/event-plan/#readme",
+  "devDependencies": {
+    "@babel/core": "^7.11.0",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.0",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@rollup/plugin-babel": "^5.1.0",
+    "@rollup/plugin-buble": "^0.21.3",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "@types/jest": "^26.0.10",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
+    "commitizen": "^4.1.2",
+    "cz-conventional-changelog": "^3.2.0",
+    "eslint": "^7.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-import-resolver-typescript": "^2.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "glob": "^7.1.6",
+    "husky": "^4.2.5",
+    "jest": "^26.4.2",
+    "lint-staged": "^10.4.2",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.23.0",
+    "rollup-plugin-add-global-ts": "^2.2.0",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-typescript2": "^0.27.1",
+    "ts-jest": "^26.3.0",
+    "tslib": "^2.0.0",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "ginlibs-chain": "^2.1.0",
+    "ginlibs-events": "^2.1.0",
+    "ginlibs-lock": "^1.0.0",
+    "ginlibs-queue": "^1.0.0",
+    "ginlibs-type-check": "^2.0.0",
+    "ginlibs-utils": "^1.0.0"
+  }
 }
