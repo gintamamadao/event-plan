@@ -26,6 +26,51 @@ describe('事件计划 Plan', () => {
     expect(str).toBe('12')
   })
 
+  test('addToPlan throw error', async () => {
+    const plan = new Plan()
+    plan.addToPlan({
+      name: 'a',
+      handle: noop,
+    })
+
+    expect(() => {
+      plan.addToPlan({
+        name: 'a-1',
+        handle: noop,
+        before: 'a',
+        after: 'a',
+      })
+    }).toThrow()
+
+    expect(() => {
+      plan.addToPlan({
+        name: 'a-1',
+        handle: noop,
+        before: 'b',
+      })
+    }).toThrow()
+
+    expect(() => {
+      plan.addToPlan({
+        name: 'a-1',
+        handle: noop,
+        after: 'b',
+      })
+    }).toThrow()
+  })
+
+  test('isPlanEvent', async () => {
+    const plan = new Plan()
+    plan.addToPlan({
+      name: 'a',
+      handle: noop,
+      weight: 10,
+    })
+
+    expect(plan.isPlanEvent('a')).toBe(true)
+    expect(plan.isPlanEvent('b')).toBe(false)
+  })
+
   test('getPlanInfo', async () => {
     const plan = new Plan()
     plan.addToPlan({

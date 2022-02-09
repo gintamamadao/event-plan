@@ -28,18 +28,17 @@ class Plan {
   public addToPlan = (info: EventPlanInfo) => {
     const { name, handle, weight = 0, before, after } = info
     if (before && after) {
-      console.error('before and after can not exist at the same')
-      return
+      throw new Error('before and after can not exist at the same')
     }
     this.planInfoMap[name] = { ...info, weight }
     if (this.isAsync) {
-      this.eventsEmitt.on(name, (...args: any[]) => {
+      this.eventsEmitt.once(name, (...args: any[]) => {
         this.eventQueue.add(() => {
           return isFunc(handle) && handle(...args)
         })
       })
     } else {
-      this.eventsEmitt.on(name, handle)
+      this.eventsEmitt.once(name, handle)
     }
     const eventNode = this.eventChain.find(name)
     if (eventNode) {
@@ -98,8 +97,7 @@ class Plan {
   private addByBefore = (before: string, name: string, weight = 0) => {
     const anchorNode = this.eventChain.find(before)
     if (!anchorNode) {
-      console.error('before event do not exist')
-      return
+      throw new Error('before event do not exist')
     }
     const beforeNodes = this.eventChain.findFuncNodes((nodeVal: string) => {
       const itEventInfo = this.planInfoMap[nodeVal]
@@ -123,8 +121,7 @@ class Plan {
   private addByAfter = (after: string, name: string, weight = 0) => {
     const anchorNode = this.eventChain.find(after)
     if (!anchorNode) {
-      console.error('after event do not exist')
-      return
+      throw new Error('after event do not exist')
     }
     const afterNodes = this.eventChain.findFuncNodes((nodeVal: string) => {
       const itEventInfo = this.planInfoMap[nodeVal]
@@ -203,23 +200,30 @@ class Plan {
     }
   }
 
+  public isPlanEvent = (eventName: string) => {
+    const node = this.eventChain.find(eventName)
+    return !!node
+  }
+
   public execPlan = () => {
     this.emitEvent()
     if (this.isAsync) {
       this.eventQueue.trigger()
     }
+    this.eventChain.getHead().next = null
   }
 
-  public execAsyncPlan = async () => {
+  public execAsyncPlan = () => {
     this.emitEvent()
     const alock = new AsyncLock()
     this.eventQueue
       .add(() => {
+        this.eventChain.getHead().next = null
         alock.unLock()
       })
       .trigger()
 
-    await alock.getLock()
+    return alock.getLock()
   }
 }
 
