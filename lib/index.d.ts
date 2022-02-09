@@ -22,7 +22,8 @@ declare class Plan {
     getPlanInfos: () => EventPlanInfo[];
     getPlan: () => string[];
     private emitEvent;
+    isPlanEvent: (eventName: string) => boolean;
     execPlan: () => void;
-    execAsyncPlan: () => Promise<void>;
+    execAsyncPlan: () => Promise<any>;
 }
 export default Plan;
